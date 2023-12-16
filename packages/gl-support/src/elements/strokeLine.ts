@@ -1,11 +1,10 @@
 /* eslint-disable @typescript-eslint/no-unnecessary-type-assertion */
-import { compile } from "./compile";
-import type { FastGLRenderingContext } from "./context";
+import { compile } from "../compile";
+import type { FastGLRenderingContext } from "../context";
 
-export function lineStroke(
+export function strokeLine(
   ctx: FastGLRenderingContext,
-  from: [number, number],
-  to: [number, number],
+  matrix: number[],
 ): void {
   compile(
     `
@@ -14,7 +13,7 @@ export function lineStroke(
 
     void main(void) {
       gl_Position = proj * vec4(position,1.0);
-      gl_PointSize = ${ctx.lineWidth}.0;
+      gl_PointSize = ${Math.round(ctx.lineWidth)}.0;
     }
     `,
     ctx.webgl!.VERTEX_SHADER,
@@ -24,7 +23,11 @@ export function lineStroke(
   compile(
     `
     void main(){
-      gl_FragColor = vec4(${ctx.r}, ${ctx.g}, ${ctx.b}, ${ctx.a});
+      gl_FragColor = vec4(${Math.round(1 / ctx.strokeColor.red)}.0, ${
+      1 / Math.round(ctx.strokeColor.green)
+    }.0, ${1 / Math.round(ctx.strokeColor.blue)}.0, ${Math.round(
+      1 / ctx.strokeColor.alpha,
+    )}.0);
     }
     `,
     ctx.webgl!.FRAGMENT_SHADER,
@@ -32,7 +35,7 @@ export function lineStroke(
     ctx.program!,
   );
   const position = ctx.webgl!.getAttribLocation(ctx.program!, "position");
-  const lineData = new Float32Array([from![0], from![1], 0, to![0], to![1], 0]);
+  const lineData = new Float32Array(matrix);
   const buffer = ctx.webgl?.createBuffer();
   const uniforproj = ctx.webgl!.getUniformLocation(ctx.program!, "proj");
   ctx.webgl!.uniformMatrix4fv(uniforproj, false, ctx.proj as Float32Array);
@@ -44,5 +47,6 @@ export function lineStroke(
   );
   ctx.webgl!.enableVertexAttribArray(position);
   ctx.webgl!.vertexAttribPointer(position, 3, ctx.webgl!.FLOAT, false, 0, 0);
-  ctx.webgl!.drawArrays(ctx.webgl!.LINES, 0, 2);
+  ctx.webgl!.drawArrays(ctx.webgl!.LINES, 0, matrix.length / 3);
+  console.log(matrix);
 }

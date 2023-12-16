@@ -1,31 +1,30 @@
-/* eslint-disable object-shorthand */
+import { Color } from "@newcar/utils/src";
 import { mat4 } from "gl-matrix";
 
-import { lineStroke } from "./line";
+import { strokeLine } from "./elements/strokeLine";
 import { Savior } from "./savior";
+
+interface Trajectory {
+  type: "lineTo" | "moveTo";
+  from?: [number, number]; // Only `lineTo` type.
+  to?: [number, number]; // Only `lineTo` type.
+  x?: number;
+  y?: number;
+}
 
 export class FastGLRenderingContext {
   #element: HTMLCanvasElement;
   #webGLContext: WebGLRenderingContext;
   #program: WebGLProgram;
   #memory: Savior[] = [];
-  #trajectory: {
-    type: "lineTo" | "moveTo";
-    from?: [number, number]; // Only `lineTo` type.
-    to?: [number, number]; // Only `lineTo` type.
-    x?: number;
-    y?: number;
-  }[] = [];
+  #trajectory: Trajectory[] = [];
 
   #projMat4: mat4 | null = null;
 
   x = 0;
   y = 0;
   lineWidth = 1;
-  r = 0;
-  g = 0;
-  b = 0;
-  a = 1;
+  strokeColor = Color.WHITE;
 
   constructor(element: HTMLCanvasElement) {
     this.#element = element;
@@ -56,10 +55,7 @@ export class FastGLRenderingContext {
       new Savior({
         x: this.x,
         y: this.y,
-        r: this.r,
-        g: this.g,
-        b: this.b,
-        a: this.a,
+        color: this.strokeColor,
         lineWidth: this.lineWidth,
       }),
     );
@@ -68,13 +64,10 @@ export class FastGLRenderingContext {
   }
 
   restore(): this {
-    this.x = this.#memory[length - 1].x;
-    this.y = this.#memory[length - 1].y;
-    this.r = this.#memory[length - 1].r;
-    this.g = this.#memory[length - 1].g;
-    this.b = this.#memory[length - 1].b;
-    this.a = this.#memory[length - 1].a;
-    this.lineWidth = this.#memory[length - 1].lineWidth;
+    this.x = this.#memory[this.#memory.length - 1].x;
+    this.y = this.#memory[this.#memory.length - 1].y;
+    this.strokeColor = this.#memory[this.#memory.length - 1].color;
+    this.lineWidth = this.#memory[this.#memory.length - 1].lineWidth;
 
     return this;
   }
@@ -98,17 +91,17 @@ export class FastGLRenderingContext {
   }
 
   stroke(): this {
+    const lines = [];
     for (const i of this.#trajectory) {
-      if (i.type === "lineTo") {
-        lineStroke(this, i.from!, i.to!);
-        // eslint-disable-next-line @typescript-eslint/no-non-null-asserted-optional-chain
-        this.#program = this.#webGLContext?.createProgram()!;
-      } else if (i.type === "dot") {
-        dotStroke(this, i.x!, i.y!);
-        // eslint-disable-next-line @typescript-eslint/no-non-null-asserted-optional-chain
-        this.#program = this.#webGLContext?.createProgram()!;
+      switch (i.type) {
+        case "lineTo": {
+          lines.push(i.from![0], i.from![1], 0, i.to![0], i.to![1], 0);
+          this.#program = this.#webGLContext.createProgram()!;
+          break;
+        }
       }
     }
+    strokeLine(this, lines);
 
     return this;
   }
@@ -120,21 +113,6 @@ export class FastGLRenderingContext {
     });
     this.x = x;
     this.y = y;
-
-    return this;
-  }
-
-  setStrokeColor(r: number, g: number, b: number, a: number): this {
-    this.r = r / 255;
-    this.g = g / 255;
-    this.b = b / 255;
-    this.a = a;
-
-    return this;
-  }
-
-  setLineWidth(value: number): this {
-    this.lineWidth = value;
 
     return this;
   }

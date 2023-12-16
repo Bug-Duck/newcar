@@ -4,6 +4,7 @@
   "author": "BugDuck Team",
   "license": "Apache-2.0",
   "devDependencies": {
-    "gl-matrix": "3.4.3"
+    "gl-matrix": "3.4.3",
+    "@newcar/utils": "workspace: ^0.6.0"
   }
 }
