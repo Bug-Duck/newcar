@@ -1,7 +1,6 @@
 /* eslint-disable object-shorthand */
 import { mat4 } from "gl-matrix";
 
-import { dotStroke } from "./dot";
 import { lineStroke } from "./line";
 import { Savior } from "./savior";
 
@@ -11,7 +10,7 @@ export class FastGLRenderingContext {
   #program: WebGLProgram;
   #memory: Savior[] = [];
   #trajectory: {
-    type: "lineTo" | "moveTo" | "dot";
+    type: "lineTo" | "moveTo";
     from?: [number, number]; // Only `lineTo` type.
     to?: [number, number]; // Only `lineTo` type.
     x?: number;
@@ -76,16 +75,6 @@ export class FastGLRenderingContext {
     this.b = this.#memory[length - 1].b;
     this.a = this.#memory[length - 1].a;
     this.lineWidth = this.#memory[length - 1].lineWidth;
-
-    return this;
-  }
-
-  dot(x: number, y: number): this {
-    this.#trajectory.push({
-      type: "dot",
-      x: x,
-      y: y,
-    });
 
     return this;
   }
