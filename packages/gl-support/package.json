@@ -2,5 +2,8 @@
   "name": "@newcar/gl-support",
   "version": "0.6.0",
   "author": "BugDuck Team",
-  "license": "Apache-2.0"
+  "license": "Apache-2.0",
+  "devDependencies": {
+    "gl-matrix": "3.4.3"
+  }
 }
