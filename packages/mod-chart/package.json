@@ -1,0 +1,22 @@
+{
+  "name": "@newcar/mod-chart",
+  "version": "0.6.5",
+  "description": "The chart module of newcar",
+  "scripts": {
+    "publish": "npm publish"
+  },
+  "author": "BugDuck Team",
+  "license": "Apache-2.0",
+  "exports": {
+    ".": {
+      "import": "./dist/newcar-mod-chart.mjs",
+      "require": "./dist/newcar-mod-chart.cjs",
+      "types": "./dist/newcar-mod-chart.d.ts"
+    }
+  },
+  "dependencies": {
+    "@newcar/basic": "workspace:0.6.5",
+    "@newcar/utils": "workspace:0.6.5"
+  },
+  "types": "./dist/newcar-mod-chart.d.ts"
+}
