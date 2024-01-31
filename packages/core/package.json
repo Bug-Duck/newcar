@@ -22,5 +22,8 @@
     "@newcar/utils": "workspace:0.6.5",
     "mitt": "^3.0.1"
   },
+  "devDependencies": {
+    "canvaskit-wasm": "^0.39.1"
+  },
   "types": "./dist/newcar-core.d.ts"
 }

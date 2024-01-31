@@ -1,4 +1,9 @@
+/* eslint-disable @typescript-eslint/prefer-ts-expect-error */
 import { config } from "@newcar/utils";
+import type { Canvas, CanvasKit, Surface } from "canvaskit-wasm";
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
+import CanvasKitInit from "canvaskit-wasm";
 import mitt from "mitt";
 
 import type { Scene } from "./scene";
@@ -12,16 +17,27 @@ export type CarHookEventMap = {
 export class Car {
   private _playing: boolean;
   private lastUpdateTime: number;
-  readonly context: CanvasRenderingContext2D;
   readonly hook = mitt<CarHookEventMap>();
+  canvaskit: CanvasKit;
+  surface: Surface;
+  context: any;
 
   constructor(public element: HTMLCanvasElement, public scene: Scene) {
     this.playing = false;
-    this.element.style.backgroundColor = "black";
-    this.context = this.element.getContext("2d")!;
+    // this.element.style.backgroundColor = "black";
+    // this.context = this.element.getContext("2d")!;
+    const canvaskit = CanvasKitInit({
+      locateFile: (file) =>
+        `https://unpkg.com/canvaskit-wasm@0.39.1/bin/${file}`,
+    });
+    canvaskit.then((canvaskit) => {
+      this.canvaskit = canvaskit;
+      this.surface = this.canvaskit.MakeWebGLCanvasSurface(this.element)!;
+      this.context = new this.canvaskit.Paint();
+    });
   }
 
-  static update(car: Car): void {
+  static update(canvas: Canvas, car: Car): void {
     car.hook.emit("before-frame-update", car);
 
     let elapsed: number;
@@ -39,7 +55,8 @@ export class Car {
       }
     }
     car.scene.elapsed += elapsed;
-    car.context.clearRect(0, 0, car.element.width, car.element.height);
+    // car.context.clearRect(0, 0, car.element.width, car.element.height);
+    canvas.clear(car.canvaskit.BLACK);
     for (const update of car.scene.updates) {
       update(car.scene.elapsed);
     }
@@ -69,7 +86,11 @@ export class Car {
     car.hook.emit("frame-updated", car);
 
     if (car.playing) {
-      requestAnimationFrame(() => Car.update(car));
+      requestAnimationFrame(() => {
+        car.surface.drawOnce((canvas) => {
+          Car.update(canvas, car);
+        });
+      });
     }
   }
 
@@ -99,7 +120,11 @@ export class Car {
     this._playing = playing;
     if (playing) {
       this.lastUpdateTime = performance.now();
-      requestAnimationFrame(() => Car.update(this));
+      requestAnimationFrame(() => {
+        this.surface.drawOnce((canvas) => {
+          Car.update(canvas, this);
+        });
+      });
     }
   }
 }

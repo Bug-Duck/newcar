@@ -18,7 +18,8 @@
     "noUnusedLocals": true,
     "resolveJsonModule": true,
     "declaration": true,
-    "declarationMap": true
+    "declarationMap": true,
+    "allowSyntheticDefaultImports": true,
   },
   "exclude": ["node_modules", "dist"],
   "include": ["packages"]
