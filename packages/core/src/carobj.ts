@@ -1,5 +1,3 @@
-import type { Car } from "./car";
-
 export const linear: TimingFunction = (x: number) => x;
 
 /**
@@ -109,10 +107,10 @@ export class CarObject implements CarObjectOption {
   draw(context: CanvasRenderingContext2D, ...args: any[]): void {}
 
   // eslint-disable-next-line unused-imports/no-unused-vars
-  beforeUpdate(car: Car): void {}
+  // beforeUpdate(car: Car): void {}
 
   // eslint-disable-next-line unused-imports/no-unused-vars
-  updated(car: Car): void {}
+  // updated(car: Car): void {}
 
   /**
    * Update method, which will be called directly at each frame.
