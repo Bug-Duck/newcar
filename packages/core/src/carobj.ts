@@ -1,5 +1,3 @@
-export const linear: TimingFunction = (x: number) => x;
-
 /**
  * A continuous function that passes through points (0,0) and (1,1).
  * @param x The independent variable from 0 to 1.
@@ -153,28 +151,28 @@ export class CarObject implements CarObjectOption {
     return this;
   }
 
-  /**
-   * Bind an animation to the object.
-   * @param animation The animation function.
-   * @param length The length of the animation.
-   * @param params The other parameters of this animation.
-   */
-  animate(
-    animate: Animate,
-    duration: number,
-    params?: Record<string, any> & { by?: TimingFunction },
-  ): this {
-    this.animations.push({
-      animate,
-      duration,
-      elapsed: 0,
-      by: typeof params === "undefined" ? linear : params.by ?? linear,
-      params,
-    });
-    // delete params.by;
+  // /**
+  //  * Bind an animation to the object.
+  //  * @param animation The animation function.
+  //  * @param length The length of the animation.
+  //  * @param params The other parameters of this animation.
+  //  */
+  // animate(
+  //   animate: Animate,
+  //   duration: number,
+  //   params?: Record<string, any> & { by?: TimingFunction },
+  // ): this {
+  //   this.animations.push({
+  //     animate,
+  //     duration,
+  //     elapsed: 0,
+  //     by: typeof params === "undefined" ? linear : params.by ?? linear,
+  //     params,
+  //   });
+  //   // delete params.by;
 
-    return this;
-  }
+  //   return this;
+  // }
 
   setup(callback: (object: this) => Promise<void>): this {
     Promise.resolve().then(() => callback(this));
