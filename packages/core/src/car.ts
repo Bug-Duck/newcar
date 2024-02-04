@@ -11,7 +11,7 @@ export interface Car {
   scene: Scene;
   state: State;
   elapsed: number;
-  defineCanvas(element: string | HTMLCanvasElement): Car;
+  set(element: string | HTMLCanvasElement): Car;
   play(): Car;
   pause(): Car;
   update(car: Car): Car;
@@ -26,7 +26,7 @@ export const createCar = (scene: Scene): Car => ({
   config: defineConfig({}),
   playing: false,
   elapsed: 0,
-  defineCanvas(element: string | HTMLCanvasElement) {
+  set(element: string | HTMLCanvasElement) {
     this.renderer = createRenderer(
       typeof element === "string" ? document.querySelector(element) : element,
     );
@@ -34,6 +34,13 @@ export const createCar = (scene: Scene): Car => ({
     return this;
   },
   update(car: Car) {
+    this.elapsed += 1;
+    const handlers = this.state.state.get(this.elapsed);
+    if (typeof handlers !== "undefined") {
+      for (const handler of handlers) {
+        handler.handle();
+      }
+    }
     this.renderer.render(car.scene.root);
     if (this.playing) {
       requestAnimationFrame(() => this.update(this));

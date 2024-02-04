@@ -1,3 +1,8 @@
-import { defineHandler } from "../handler";
+import type { Handler } from "../handler";
 
-export const customHandler = defineHandler((callback: () => any) => callback());
+export class CustomHandler implements Handler {
+  constructor(public callback: () => any | void) {}
+  handle(): void {
+    this.callback();
+  }
+}

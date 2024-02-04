@@ -1,7 +1,3 @@
 export interface Handler {
-  handle: (...arg: any[]) => any;
+  handle: () => any | void;
 }
-
-export const defineHandler = (handleFn: (...arg: any[]) => any): Handler => ({
-  handle: handleFn,
-});
