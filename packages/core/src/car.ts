@@ -14,9 +14,8 @@ export interface Car {
   defineCanvas(element: string | HTMLCanvasElement): Car;
   play(): Car;
   pause(): Car;
-  update(): Car;
+  update(car: Car): Car;
   config: Config;
-  isPlaying: boolean;
   playing: boolean;
 }
 
@@ -25,7 +24,7 @@ export const createCar = (scene: Scene): Car => ({
   scene,
   state: defineState(new Map()),
   config: defineConfig({}),
-  isPlaying: false,
+  playing: false,
   elapsed: 0,
   defineCanvas(element: string | HTMLCanvasElement) {
     this.renderer = createRenderer(
@@ -34,31 +33,23 @@ export const createCar = (scene: Scene): Car => ({
 
     return this;
   },
+  update(car: Car) {
+    this.renderer.render(car.scene.root);
+    if (this.playing) {
+      requestAnimationFrame(() => this.update(this));
+    }
+
+    return this;
+  },
   play() {
-    this.isPlaying = true;
+    this.playing = true;
+    requestAnimationFrame(() => this.update(this));
 
     return this;
   },
   pause() {
-    this.isPlaying = false;
+    this.playing = false;
 
     return this;
-  },
-  update() {
-    this.renderer.render(this.scene.root);
-    if (this.isPlaying) {
-      requestAnimationFrame(this.update);
-    }
-
-    return this;
-  },
-  set playing(value: boolean) {
-    this.isPlaying = value;
-    if (this.isPlaying) {
-      requestAnimationFrame(this.update);
-    }
-  },
-  get playing() {
-    return this.isPlaying;
   },
 });
