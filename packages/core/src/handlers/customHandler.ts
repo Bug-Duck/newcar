@@ -5,4 +5,8 @@ export class CustomHandler implements Handler {
   handle(): void {
     this.callback();
   }
+
+  get duration(): number {
+    return 1;
+  }
 }
