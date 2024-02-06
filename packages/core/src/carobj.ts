@@ -6,27 +6,6 @@
 export type TimingFunction = (x: number) => number;
 
 /**
- * A functional animation.
- * @param object The Animated object.
- * @param process The process of the animation.
- * @param params Other parameters of the animation.
- */
-export type Animate = (
-  object: CarObject,
-  process: number,
-  by: TimingFunction,
-  params?: Record<string, any>,
-) => void;
-
-interface Animation {
-  animate: Animate;
-  duration: number;
-  elapsed: number;
-  by: TimingFunction;
-  params?: Record<string, any>;
-}
-
-/**
  * The carobj options.
  * @param display Whether or not the object should be rendered.
  * @param x The x coordinate of the object based on parent object.

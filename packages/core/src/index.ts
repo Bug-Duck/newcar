@@ -1,3 +1,4 @@
+export * from "./animation";
 export * from "./car";
 export * from "./carobj";
 export * from "./config";

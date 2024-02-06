@@ -29,6 +29,7 @@ export const createCar = (scene: Scene): Car => ({
     return this;
   },
   update(car: Car) {
+    this.renderer.clean();
     this.scene.elapsed += 1;
     const handlers = this.scene.state.state.get(this.scene.elapsed);
     if (typeof handlers !== "undefined") {
