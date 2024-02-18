@@ -1,5 +1,6 @@
 import type { Config } from "./config";
 import { defineConfig } from "./config";
+import { AnimationHandler } from "./handlers/animationHandler";
 import type { Renderer } from "./renderer";
 import { createRenderer } from "./renderer";
 import type { Scene } from "./scene";
@@ -46,6 +47,7 @@ export const createCar = (scene: Scene): Car => ({
   },
   play() {
     this.playing = true;
+    this.checkout(this.scene);
     requestAnimationFrame(() => this.update(this));
 
     return this;
@@ -57,6 +59,9 @@ export const createCar = (scene: Scene): Car => ({
   },
   checkout(scene: Scene): Car {
     this.scene = scene;
+    for (const animation of this.scene.root.animations) {
+      this.scene.addHandler(new AnimationHandler(animation, 0, 200));
+    }
 
     return this;
   },

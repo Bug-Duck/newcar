@@ -1,3 +1,6 @@
+import type { Animation, AnimationOperationalFunction } from "./animation";
+import { createAnimation } from "./animation";
+
 /**
  * A continuous function that passes through points (0,0) and (1,1).
  * @param x The independent variable from 0 to 1.
@@ -83,10 +86,8 @@ export class CarObject implements CarObjectOption {
   // eslint-disable-next-line unused-imports/no-unused-vars
   draw(context: CanvasRenderingContext2D, ...args: any[]): void {}
 
-  // eslint-disable-next-line unused-imports/no-unused-vars
   // beforeUpdate(car: Car): void {}
 
-  // eslint-disable-next-line unused-imports/no-unused-vars
   // updated(car: Car): void {}
 
   /**
@@ -130,28 +131,21 @@ export class CarObject implements CarObjectOption {
     return this;
   }
 
-  // /**
-  //  * Bind an animation to the object.
-  //  * @param animation The animation function.
-  //  * @param length The length of the animation.
-  //  * @param params The other parameters of this animation.
-  //  */
-  // animate(
-  //   animate: Animate,
-  //   duration: number,
-  //   params?: Record<string, any> & { by?: TimingFunction },
-  // ): this {
-  //   this.animations.push({
-  //     animate,
-  //     duration,
-  //     elapsed: 0,
-  //     by: typeof params === "undefined" ? linear : params.by ?? linear,
-  //     params,
-  //   });
-  //   // delete params.by;
+  /**
+   * Bind an animation to the object.
+   * @param animation The animation function.
+   * @param length The length of the animation.
+   * @param params The other parameters of this animation.
+   */
+  animate(
+    animate: AnimationOperationalFunction,
+    duration: number,
+    params?: Record<string, any> & { by?: TimingFunction },
+  ): this {
+    this.animations.push(createAnimation(this, animate, duration, params));
 
-  //   return this;
-  // }
+    return this;
+  }
 
   setup(callback: (object: this) => Promise<void>): this {
     Promise.resolve().then(() => callback(this));
