@@ -47,7 +47,11 @@ export const createCar = (scene: Scene): Car => ({
   },
   play() {
     this.playing = true;
-    this.checkout(this.scene);
+    for (const animation of this.scene.root.animations) {
+      this.scene.addHandler(
+        new AnimationHandler(animation[1], animation[0], animation[1].duration),
+      );
+    }
     requestAnimationFrame(() => this.update(this));
 
     return this;
@@ -60,7 +64,9 @@ export const createCar = (scene: Scene): Car => ({
   checkout(scene: Scene): Car {
     this.scene = scene;
     for (const animation of this.scene.root.animations) {
-      this.scene.addHandler(new AnimationHandler(animation, 0, 200));
+      this.scene.addHandler(
+        new AnimationHandler(animation[1], animation[0], animation[1].duration),
+      );
     }
 
     return this;

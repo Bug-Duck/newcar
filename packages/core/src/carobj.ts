@@ -54,8 +54,9 @@ export class CarObject implements CarObjectOption {
   operation: GlobalCompositeOperation;
   children: CarObject[] = [];
   parent?: CarObject;
-  animations: Animation[] = [];
+  animations = new Map<number, Animation>();
   progress: number;
+  current = 0;
   data: Record<string, any> = {};
 
   /**
@@ -142,13 +143,16 @@ export class CarObject implements CarObjectOption {
     duration: number,
     params?: Record<string, any> & { by?: TimingFunction },
   ): this {
-    this.animations.push(createAnimation(this, animate, duration, params));
+    this.animations.set(
+      this.current,
+      createAnimation(this, animate, duration, params),
+    );
 
     return this;
   }
 
-  setup(callback: (object: this) => Promise<void>): this {
-    Promise.resolve().then(() => callback(this));
+  setup(callback: (object: this) => any): this {
+    callback(this);
 
     return this;
   }
@@ -171,6 +175,12 @@ export class CarObject implements CarObjectOption {
     }
 
     return undefined;
+  }
+
+  sleep(frame: number): this {
+    this.current += frame;
+
+    return this;
   }
 
   get scale(): [number, number] {
