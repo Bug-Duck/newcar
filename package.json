@@ -35,7 +35,7 @@
     "eslint": "^9.2.0",
     "husky": "^8.0.0",
     "lint-staged": "^15.2.2",
-    "pnpm": "^9.1.0",
+    "pnpm": "^9.15.0",
     "rimraf": "^3.0.2",
     "simple-git-hooks": "^2.11.1",
     "taze": "^0.13.8",
